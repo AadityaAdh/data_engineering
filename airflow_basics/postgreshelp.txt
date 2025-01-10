@@ -1,0 +1,60 @@
+Let's break down the code you have for the `insert_query` and `for` loop in the `insert_into_table` function:
+
+### Code:
+
+```python
+insert_query = """
+    INSERT INTO tableone(name, age)
+    VALUES(%s, %s)
+"""
+for customers in data:
+    postgress_hook.run(insert_query, parameters=(customers['name'], customers['age']))
+```
+
+### What is happening:
+
+1. **`insert_query` Definition:**
+   - The `insert_query` is a string that contains an SQL query to insert data into a table called `tableone`. The query is structured as:
+     ```sql
+     INSERT INTO tableone(name, age)
+     VALUES(%s, %s)
+     ```
+     Here:
+     - `tableone(name, age)`: Specifies that the data will be inserted into the `name` and `age` columns of the table `tableone`.
+     - `VALUES(%s, %s)`: This defines placeholders for the values to be inserted into the `name` and `age` columns. The `%s` placeholders will be replaced by actual values at runtime.
+
+2. **`for customers in data:`**
+   - This is a `for` loop that iterates over each element in the `data` list. The `data` list contains dictionaries, and each dictionary represents a customer with two keys: `name` and `age`.
+   
+   So, for the first iteration, `customers` will be:
+   ```python
+   {"name": "aaditya", "age": 20}
+   ```
+   In the second iteration, `customers` will be:
+   ```python
+   {"name": "ram", "age": 30}
+   ```
+
+3. **`postgress_hook.run(insert_query, parameters=(customers['name'], customers['age']))`:**
+   - This is the line that actually executes the SQL query.
+   - `postgress_hook`: It refers to an instance of the `PostgresHook` object, which is a connection to the PostgreSQL database. It allows you to interact with the database and run queries.
+   - `.run()`: This method runs the SQL query defined in `insert_query`.
+   - `parameters=(customers['name'], customers['age'])`: The `parameters` argument is used to pass the actual values to replace the `%s` placeholders in the `insert_query`.
+     - `customers['name']` gets the `name` value from the current customer (e.g., `"aaditya"`, `"ram"`).
+     - `customers['age']` gets the `age` value from the current customer (e.g., `20`, `30`).
+
+   So, for the first iteration:
+   ```python
+   postgress_hook.run(insert_query, parameters=("aaditya", 20))
+   ```
+   And for the second iteration:
+   ```python
+   postgress_hook.run(insert_query, parameters=("ram", 30))
+   ```
+
+### In summary:
+1. The `insert_query` defines an SQL statement to insert values into the `tableone` table in the `name` and `age` columns.
+2. The `for` loop iterates over the `data` list, which contains customer data (name and age).
+3. In each iteration, the `PostgresHook.run()` method is called to execute the insert query and insert the actual values (from the current customer) into the table.
+
+This allows you to insert multiple rows into the `tableone` table, one row for each customer in the `data` list.
